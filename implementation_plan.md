@@ -256,7 +256,7 @@ GET /api/sellers/:id/analytics/inventory # Inventory analytics
 
 ## Frontend Architecture
 
-### Component Structure
+### Buyer App Component Structure
 
 ```
 src/
@@ -268,13 +268,15 @@ src/
   │   │   ├── Modal.tsx
   │   │   └── ...
   │   ├── layout/
-  │   │   ├── Header.tsx
-  │   │   ├── Footer.tsx
-  │   │   ├── Sidebar.tsx
+  │   │   ├── BuyerHeader.tsx
+  │   │   ├── BuyerFooter.tsx
+  │   │   ├── BuyerSidebar.tsx
   │   │   └── ...
   │   ├── auth/
-  │   │   ├── LoginForm.tsx
+  │   │   ├── EmailLoginForm.tsx
+  │   │   ├── PhoneLoginForm.tsx
   │   │   ├── RegisterForm.tsx
+  │   │   ├── VerifyPhoneForm.tsx
   │   │   └── ...
   │   ├── search/
   │   │   ├── SearchBar.tsx
@@ -290,22 +292,23 @@ src/
   │   │   ├── OrderSummary.tsx
   │   │   ├── TrackingView.tsx
   │   │   └── ...
-  │   ├── seller/
-  │   │   ├── SellerProfile.tsx
-  │   │   ├── InventoryManager.tsx
-  │   │   ├── AnalyticsDashboard.tsx
+  │   ├── buyer/
+  │   │   ├── BuyerProfile.tsx
+  │   │   ├── FavoritesList.tsx
+  │   │   ├── OrderHistory.tsx
   │   │   └── ...
   │   └── ...
   ├── pages/
   │   ├── Home.tsx
   │   ├── Login.tsx
   │   ├── Register.tsx
+  │   ├── VerifyPhone.tsx
   │   ├── Search.tsx
   │   ├── ProductDetail.tsx
   │   ├── Checkout.tsx
   │   ├── OrderTracking.tsx
-  │   ├── UserProfile.tsx
-  │   ├── SellerDashboard.tsx
+  │   ├── BuyerProfile.tsx
+  │   ├── Favorites.tsx
   │   └── ...
   ├── hooks/
   │   ├── useAuth.ts
@@ -329,10 +332,12 @@ src/
   │   ├── formatters.ts
   │   ├── validators.ts
   │   ├── geolocation.ts
+  │   ├── phoneUtils.ts
   │   └── ...
   ├── types/
   │   ├── index.ts
   │   ├── api.ts
+  │   ├── buyer.types.ts
   │   ├── database.types.ts
   │   └── ...
   ├── assets/
@@ -341,10 +346,13 @@ src/
   │   └── ...
   ├── styles/
   │   ├── globals.css
+  │   ├── buyer-theme.css
   │   └── ...
   ├── App.tsx
   └── main.tsx
 ```
+
+> Note: For the Seller App component structure, please refer to the separate [Seller Implementation Plan](./seller_implementation_plan.md) document.
 
 ### Design System
 
@@ -376,9 +384,24 @@ CREATE TABLE users (
   user_type TEXT NOT NULL CHECK (user_type IN ('buyer', 'seller')),
   avatar_url TEXT,
   is_phone_verified BOOLEAN DEFAULT FALSE,
+  preferred_auth_method TEXT NOT NULL DEFAULT 'email' CHECK (preferred_auth_method IN ('email', 'phone')),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+```
+
+### Buyer Profiles Table
+```sql
+CREATE TABLE buyer_profiles (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  delivery_preferences JSONB DEFAULT '{}'::jsonb,
+  payment_methods JSONB DEFAULT '{}'::jsonb,
+  notification_preferences JSONB DEFAULT '{}'::jsonb,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
 ```
 
 ### Seller Profiles Table
