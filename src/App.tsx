@@ -112,14 +112,14 @@ function App() {
         </div>
 
         {/* Main Content */}
-        <main className="max-w-7xl mx-auto px-4 py-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <main className="max-w-7xl mx-auto px-4 py-4 pb-20 grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Map Section */}
-          <div className="h-[600px] bg-white rounded-lg shadow-md overflow-hidden">
+          <div className="h-[calc(100vh-180px)] bg-white rounded-lg shadow-md overflow-hidden">
             {userLocation && (
               <MapContainer
                 center={userLocation}
                 zoom={13}
-                className="h-full w-full"
+                className="h-full w-full z-0"
               >
                 <TileLayer
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -195,7 +195,7 @@ function App() {
         </main>
 
         {/* Navigation Bar */}
-        <nav className="fixed bottom-0 inset-x-0 bg-white border-t border-gray-200">
+        <nav className="fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 z-10">
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex justify-around py-3">
               <button className="flex flex-col items-center text-gray-600 hover:text-emerald-600">
